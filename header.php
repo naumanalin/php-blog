@@ -1,8 +1,11 @@
 <?php
 
 $page = basename($_SERVER['PHP_SELF'], '.php');
+
 // use this in if condition to dynamic the "active" class
-echo dirname(__FILE__);
+// echo dirname(__FILE__);
+// OP: /opt/lampp/htdocs/blog
+
 include 'connect.php';
 $head_cat = "SELECT * FROM category";
 $query_hc = mysqli_query($con, $head_cat);
@@ -27,7 +30,7 @@ $query_hc = mysqli_query($con, $head_cat);
     <!-- custome style sheet -->
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="bg-light">
 
 <!-- navigation -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -60,9 +63,16 @@ $query_hc = mysqli_query($con, $head_cat);
           <a class="nav-link <?= ($page=="login")? 'active':''; ?>"
                href="login.php" >Login</a>
         </li>
-      </ul>
-      <form class="d-flex">
-        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+      </ul> 
+      <?php if(isset($_GET['keyword'])){
+          $keyword = $_GET['keyword'];
+      } else {
+        $keyword = "";
+      } ?>
+      <form class="d-flex" action="search.php" method="GET">
+        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"
+        reqired name="keyword" maxlength="70" value="<?= $keyword ?>" >
+        
         <button class="btn btn-outline-success" type="submit">Search</button>
       </form>
     </div>

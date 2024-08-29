@@ -105,8 +105,8 @@ if(isset($_POST['btn_delete'])){
    }
    else{
       $msg= ['Failed to delete user, try again.', 'alert-danger'];
-                $_SESSION['msg'] = $msg;
-                header('location:users.php');
+      $_SESSION['msg'] = $msg;
+      header('location:users.php');
    }
   
 

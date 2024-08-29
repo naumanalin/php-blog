@@ -2,10 +2,13 @@
 	  include 'connect.php';
 	//   pagination
 if(!isset($_GET['page'])){
-	$page = 1;	}
-else{$page = $_GET['page'];}
-$limit = 2;
-echo $offset = ($page -1)*$limit;
+	$page = 1;	
+} else{
+	$page = $_GET['page'];
+}
+$limit = 3;
+
+$offset = ($page -1)*$limit;
 
 
 	//  -----------------------
@@ -63,8 +66,9 @@ $rows = mysqli_num_rows($query);
 			$pagination = "SELECT * FROM blog";
 			$run_q= mysqli_query($con, $pagination);
 			$total_blogs= mysqli_num_rows($run_q);
-			$pages = ceil($total_blogs/$limit);;
+			$pages = ceil($total_blogs/$limit);
 
+			if ($total_blogs > $limit){
 			?>
 			<ul class="pagination py-4">
 				<?php for($i=1; $i<=$pages; $i++){		?>
@@ -73,6 +77,7 @@ $rows = mysqli_num_rows($query);
 				</li>
 			<?php }	?>
 			</ul>
+			<?php } ?>
 		</div>
 		
 		<?php include 'sidebar.php'; ?>

@@ -39,22 +39,15 @@ if(isset($_GET['id'])){
             <select name="category" id="" class="form-control">
                 <?php   while($row=mysqli_fetch_assoc($run)){ 
                                    ?>
-                <option value="<?= $row['cat_id'] ?>"> <?=  $row['cat_name'];  
-                
-                
-                
-                // who it work i don't understand: (video No. 13 time: 21:00.)
-
-
-
-                if($row1['category'] == $row['cat_name']){
+                <option value="<?= $row['cat_id'] ?>" <?php if($row1['category'] == $row['cat_id']){
                     echo "selected";
                 }
                 else{
                     echo "";
-                }
-                
-                ?></option>
+                } ?> > 
+
+                    <?=  $row['cat_name']; ?>
+                </option>
 
             <?php     }   ?>
             </select>
@@ -64,7 +57,7 @@ if(isset($_GET['id'])){
             </div>
             <div class="mb-3">
                 <input type="submit" name="edit_blog" value="Update" class="btn btn-primary">
-                <a href="categories.php" class="btn btn-secondary">Back</a>
+                <a href="index.php" class="btn btn-secondary">Back</a>
             </div>
             </form>
         </div>
@@ -88,32 +81,32 @@ if(isset($_POST['edit_blog'])){
     $extensions = array('jpeg', 'jpg', 'png'); 
     $img_destinatio = "image/".$file_name;
 
-    if(!empty($file_name)){
-    if(in_array($file_extension, $extensions)){
-
-        $preimage = $row1['blog_image'];
-        if($preimage){
-            unlink($preimage);
+    if (!empty($file_name)) {
+        if (in_array($file_extension, $extensions)) {
+            $preimage = $row1['blog_image'];
+            if ($preimage) {
+                unlink($preimage);
+            }
+    
+            move_uploaded_file($file_temp, $img_destinatio);
+    
+            $sql = "UPDATE `blog` SET blog_title='$title', blog_body='$body',
+            blog_image='$img_destinatio', category='$category' WHERE blog_id = '$id'";
+        } else {
+            echo "Invalid Extension!";
+            exit;
         }
-
-        move_uploaded_file($file_temp, $img_destinatio);
-
-        $id = $_GET['id'];
-
-        $sql = "UPDATE `blog` SET blog_title='$title',blog_body='$body',
-        blog_image='$img_destinatio',category='$category '
-        WHERE blog_id = '$id'";
-
-        $run11 = mysqli_query($con, $sql);
-
-        header('location:index.php');
+    } else {
+        $sql = "UPDATE `blog` SET blog_title='$title', blog_body='$body',
+        category='$category' WHERE blog_id = '$id'";
     }
-    else{
-        echo "Invalid Extension !";
+    
+    $run11 = mysqli_query($con, $sql);
+    
+    if ($run11) {
+        header('Location: index.php');
+    } else {
+        echo "Failed to update the blog post.";
     }
 }
-
-}
-
-
-?>
+    

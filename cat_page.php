@@ -4,7 +4,7 @@
       if(empty($id)){
         header('location:index.php');
       }
-$cat_sql = "SELECT * FROM blog LEFT JOIN category ON blog.category=category.cat_id LEFT JOIN user ON blog.author_id=user.user_id WHERE blog_id='$id' ORDER BY blog.publish_date DESC" ;
+$cat_sql = "SELECT * FROM blog LEFT JOIN category ON blog.category=category.cat_id LEFT JOIN user ON blog.author_id=user.user_id WHERE cat_id='$id' ORDER BY blog.publish_date DESC" ;
 $cat_query = mysqli_query($con, $cat_sql);
 $rows_cat = mysqli_num_rows($cat_query);
 	 ?>

@@ -1,7 +1,7 @@
 <?php
 include 'header.php';
 if(isset($_SESSION['user_data'])){
-   $userid = $_SESSION['user_data'];
+   $userid = $_SESSION['user_data'][0];
 }
 ?>
    <!-- Begin Page Content -->
@@ -31,56 +31,54 @@ if(isset($_SESSION['user_data'])){
             <div class="table-responsive">
                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                   <thead>
-         <tr>
-            <th>Sr.No</th>
-            <th>Title</th>
-            <th>Category</th>
-            <th>Author</th>
-            <th>Date</th>
-            <th colspan="2">Action</th>
-         </tr>
-      </thead>
+                     <tr>
+                        <th>Sr.No</th>
+                        <th>Title</th>
+                        <th>Category</th>
+                        <th>Author</th>
+                        <th>Date</th>
+                        <th colspan="2">Action</th>
+                     </tr>
+                  </thead>
                   <tbody>
-                     
                      <?php
-                        $sql = "SELECT * FROM `blog` LEFT JOIN `category` ON 'blog.category'='category.cat_id' WHERE author_id= 1 ORDER BY blog.publish_date DESC";
+                     //  $sql = "SELECT * FROM blog LEFT JOIN category ON 'blog.category'='category.cat_id' WHERE author_id= '$userid' ORDER BY blog.publish_date DESC";
+                        $sql = "SELECT blog.*, category.cat_name, user.username 
+                                FROM blog 
+                                LEFT JOIN category ON blog.category = category.cat_id 
+                                LEFT JOIN user ON blog.author_id = user.user_id 
+                                WHERE blog.author_id = '$userid' 
+                                ORDER BY blog.publish_date DESC";
                         $run = mysqli_query($con, $sql);
-
                      
                         $count = 0;
-                           while($rows = mysqli_fetch_assoc($run)){
-                              $id = $rows['blog_id'];
-                              $col_title = $rows['blog_title'];
-                              $col_category = $rows['cat_name'];
-                              $date = $rows['publish_date'];
-                              $imagepath = $rows['blog_image'];
-
-                              $author = "admin";
-
-
-                         
+                        while($rows = mysqli_fetch_assoc($run)){
+                           $id = $rows['blog_id'];
+                           $col_title = $rows['blog_title'];
+                           $col_category = $rows['cat_name'];
+                           $date = $rows['publish_date'];
+                           $imagepath = $rows['blog_image'];
+                           $author = $rows['username'];
 
                            echo '<tr>
                               <td>'. ++$count .'</td>
-                              <td>'.$rows['blog_title'].'</td>
-                              <td>'.$rows['category'].'</td>
+                              <td>'.$col_title.'</td>
+                              <td>'.$col_category.'</td>
                               <td>'.$author.'</td>
-                              <td>'.$rows['publish_date'].'</td>
+                              <td>'.$date.'</td>
                               <td>
-                              <a href="edit_blog.php?id='.$id.'" class="btn btn-primary">Edit</a>
+                                 <a href="edit_blog.php?id='.$id.'" class="btn btn-primary">Edit</a>
                               </td>
                               <td>
-                              <form  method="POST" onsubmit="return confirm(\'Are you sure to delete!\')">
-                                    <input type="hidden" value='.$id.' name="dqid"> 
-                                    <input type="hidden" value='.$imagepath.' name="image"> 
+                                 <form method="POST" onsubmit="return confirm(\'Are you sure to delete?\')">
+                                    <input type="hidden" value="'.$id.'" name="dqid"> 
+                                    <input type="hidden" value="'.$imagepath.'" name="image"> 
                                     <input type="submit" name="deletebtn" class="btn btn-danger" value="Delete">
-                              </form>
-                              <td>
-                              </tr>';
-                          
-                          
-                          
-                          } ?>
+                                 </form>
+                              </td>
+                           </tr>';
+                        } 
+                     ?>
                   </tbody>
                </table>
             </div>
@@ -96,22 +94,17 @@ include 'footer.php';
 if(isset($_POST['deletebtn'])){
    $id = $_POST['dqid'];
    $img = "image/".$_POST['image'];
-   echo $img;
   
-   $delete = "DELETE FROM `blog` WHERE blog_id = '{$id}'";
+   $delete = "DELETE FROM blog WHERE blog_id = '$id'";
    $run = mysqli_query($con, $delete);
    
    if($run){
-      unlink($img);
-      $msg= ['Category add successfully', 'alert-success'];
-      $_SESSION['msg'] = $msg;
+      unlink($img); // Delete the image file from the server
+      $_SESSION['msg'] = ['Blog post has been deleted successfully', 'alert-success'];
+      header('location:index.php');
+   } else {
+      $_SESSION['msg'] = ['Failed to delete the blog post', 'alert-danger'];
       header('location:index.php');
    }
-   else{
-      $msg= ['Category add successfully', 'alert-danger'];
-            $_SESSION['msg'] = $msg;
-      header('location:index.php');
-   }
-
 }
 ?>

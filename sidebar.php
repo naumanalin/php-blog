@@ -14,7 +14,7 @@ $query3 = mysqli_query($con, $sql3);
 						<h6>Categories</h6>
 						<ul>
 						<?php while($cats=mysqli_fetch_assoc($query_sc)){	?>
-							<a href="cat_page.php?id=<?= $cats['cat_id'] ?>" class="text-decoration-none text-dark"><li><?= $cats['cat_name'];	?></li></a>
+							<a href="cat_page.php?id=<?= $cats['cat_id'] ?>" class="text-decoration-none color-success fw-bold"><li><?= $cats['cat_name'];	?></li></a>
 						<?php }	?>
 						</ul>
 					</div>
@@ -22,7 +22,7 @@ $query3 = mysqli_query($con, $sql3);
 						<h6>Recent Posts</h6>
 						<ul>
 							<?php while($record=mysqli_fetch_assoc($query3)){ 		?>
-							<li><a href="single_post.php?id=<?= $record['blog_id'] ?>"><?=	$record['blog_title']	?></a></li>
+							<li  class="text-decoration-none color-success fw-bold"><a href="single_post.php?id=<?= $record['blog_id'] ?>"><?=	$record['blog_title']	?></a></li>
 							<?php } ?>
 						</ul>
 					</div>
